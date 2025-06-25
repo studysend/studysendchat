@@ -1,0 +1,325 @@
+📦 Tables in database:
+ - accounts
+ - credentials
+ - colleges
+ - enrollment
+ - crn
+ - booking_status
+ - followers
+ - invites
+ - post
+ - profile
+ - slots
+ - session_files
+ - transactions
+ - sessions
+ - wallet
+ - savedposts
+ - bookings
+ - notifications
+ - follow_crns
+
+🔍 Columns in table 'accounts':
+ - id (INTEGER)
+ - department (VARCHAR)
+ - amount (NUMERIC(20, 4))
+ - date (TIMESTAMP)
+ - currency (VARCHAR)
+ - status (VARCHAR)
+
+🔍 Columns in table 'credentials':
+ - id (INTEGER)
+ - email (TEXT)
+ - name (TEXT)
+ - topic (TEXT)
+ - password (TEXT)
+ - signature (TEXT)
+ - status (TEXT)
+
+🔍 Columns in table 'colleges':
+ - id (INTEGER)
+ - country (VARCHAR(255))
+ - name (VARCHAR(255))
+ - state (VARCHAR(100))
+
+🔍 Columns in table 'enrollment':
+ - id (INTEGER)
+ - session_id (INTEGER)
+ - subscriber_email (VARCHAR(255))
+ - subscribed_on (TIMESTAMP)
+ - status (VARCHAR(10))
+ - repeat (BOOLEAN)
+
+🔍 Columns in table 'crn':
+ - id (INTEGER)
+ - crn (TEXT)
+ - title (TEXT)
+ - collegeid (INTEGER)
+
+🔍 Columns in table 'booking_status':
+ - id (INTEGER)
+ - datecreated (TIMESTAMP)
+ - status (VARCHAR(255))
+
+🔍 Columns in table 'followers':
+ - id (INTEGER)
+ - user_id (TEXT)
+ - follows_id (TEXT)
+
+🔍 Columns in table 'invites':
+ - id (INTEGER)
+ - invited_by (VARCHAR(255))
+ - invited (VARCHAR(255))
+ - post_id (INTEGER)
+ - session_id (INTEGER)
+ - booking_id (INTEGER)
+ - created_on (TIMESTAMP)
+ - accepted (BOOLEAN)
+
+🔍 Columns in table 'post':
+ - id (INTEGER)
+ - user_id (VARCHAR(255))
+ - date (TIMESTAMP)
+ - details (TEXT)
+ - saved_count (INTEGER)
+ - crn (VARCHAR(255))
+ - post_name (VARCHAR(255))
+ - doc_url (VARCHAR(255))
+ - doc_name (VARCHAR(255))
+ - thumb_url (TEXT)
+
+🔍 Columns in table 'profile':
+ - id (INTEGER)
+ - name (VARCHAR(255))
+ - college (VARCHAR(255))
+ - designation (VARCHAR(255))
+ - start_date (DATE)
+ - end_date (DATE)
+ - major (VARCHAR(255))
+ - email (VARCHAR(255))
+ - profile_image (VARCHAR(255))
+ - description (TEXT)
+ - username (VARCHAR(255))
+ - hourly_rate (TEXT)
+ - wallet (TEXT)
+ - stripe_account_id (VARCHAR(255))
+ - education (TEXT)
+ - schoollevel (TEXT)
+ - school (TEXT)
+
+🔍 Columns in table 'slots':
+ - id (INTEGER)
+ - email (VARCHAR(255))
+ - day (VARCHAR(10))
+ - start_time (VARCHAR(8))
+ - end_time (VARCHAR(8))
+ - booked (BOOLEAN)
+ - changed_on (TIMESTAMP)
+
+🔍 Columns in table 'session_files':
+ - id (INTEGER)
+ - file (VARCHAR(255))
+ - thumb (VARCHAR(255))
+ - changed_date (TIMESTAMP)
+ - user_email (VARCHAR(255))
+
+🔍 Columns in table 'transactions':
+ - id (INTEGER)
+ - date (TIMESTAMP)
+ - transaction_id (VARCHAR(255))
+ - type (VARCHAR(10))
+ - amount (NUMERIC(10, 4))
+ - email (TEXT)
+ - to (TEXT)
+ - from (TEXT)
+ - message (TEXT)
+
+🔍 Columns in table 'sessions':
+ - id (INTEGER)
+ - title (TEXT)
+ - description (VARCHAR(255))
+ - event_date (TIMESTAMP)
+ - event_time (TIME)
+ - repeat_days (ARRAY)
+ - posts (ARRAY)
+ - crns (ARRAY)
+ - repeat (BOOLEAN)
+ - admin_email (TEXT)
+ - status (TEXT)
+ - end_time (TIME)
+ - rate (INTEGER)
+ - files (JSONB)
+
+🔍 Columns in table 'wallet':
+ - id (INTEGER)
+ - amount (NUMERIC(10, 4))
+ - date (TIMESTAMP)
+ - currency (VARCHAR)
+ - status (VARCHAR)
+ - email (TEXT)
+
+🔍 Columns in table 'savedposts':
+ - id (INTEGER)
+ - post_id (INTEGER)
+ - user_id (TEXT)
+ - notes (TEXT)
+ - timestamp (TIMESTAMP)
+
+🔍 Columns in table 'bookings':
+ - id (INTEGER)
+ - topic (VARCHAR(255))
+ - starts_on (TIMESTAMP)
+ - ends_on (TIMESTAMP)
+ - date (TIMESTAMP)
+ - admin (VARCHAR(255))
+ - joinee (VARCHAR(255))
+ - password (INTEGER)
+ - payment (BOOLEAN)
+ - booking_remarks (VARCHAR(512))
+ - return_remarks (VARCHAR(256))
+ - status (VARCHAR(255))
+ - approval_remarks (TEXT)
+ - transaction_id (VARCHAR(255))
+ - amount (NUMERIC(10, 2))
+ - meeting_status (TEXT)
+ - joined_by (ARRAY)
+ - slot_id (INTEGER)
+ - post_id (INTEGER)
+ - is_session (BOOLEAN)
+ - session_id (INTEGER)
+ - transaction_status (VARCHAR(20))
+
+🔍 Columns in table 'notifications':
+ - id (INTEGER)
+ - userid (INTEGER)
+ - generationid (VARCHAR(255))
+ - url (VARCHAR(255))
+ - message (VARCHAR(300))
+ - isread (BOOLEAN)
+ - timestamp (TIMESTAMP)
+ - type (VARCHAR(255))
+
+🔍 Columns in table 'follow_crns':
+ - id (INTEGER)
+ - userid (INTEGER)
+ - course (VARCHAR(100))
+ - crn (VARCHAR(20))
+ - crn_id (INTEGER)
+
+📄 First 5 rows of 'accounts':
+
+📄 First 5 rows of 'credentials':
+
+📄 First 5 rows of 'colleges':
+(116, None, None, None)
+(117, None, None, None)
+(118, None, None, None)
+(3, 'America', 'Amridge University', 'Alabama')
+(1, 'America', 'Alabama A & M University', 'Alabama')
+
+📄 First 5 rows of 'enrollment':
+(146, 113, 'ashishsah1000@gmail.com', datetime.datetime(2025, 5, 10, 20, 1, 10, 585177, tzinfo=datetime.timezone.utc), 'active', True)
+(147, 113, 'indrathegodofthunder@gmail.com', datetime.datetime(2025, 5, 10, 20, 1, 10, 604983, tzinfo=datetime.timezone.utc), 'active', True)
+(148, 112, 'indrathegodofthunder@gmail.com', datetime.datetime(2025, 5, 10, 20, 1, 12, 883968, tzinfo=datetime.timezone.utc), 'active', False)
+(149, 112, 'ashishsah1000@gmail.com', datetime.datetime(2025, 5, 10, 20, 1, 18, 277406, tzinfo=datetime.timezone.utc), 'active', False)
+(150, 113, 'rez1.biswas@gmail.com', datetime.datetime(2025, 5, 11, 15, 25, 45, 905416, tzinfo=datetime.timezone.utc), 'active', True)
+
+📄 First 5 rows of 'crn':
+(1423, 'CIT 221', 'Lesson Plan Implementation', 45)
+(1424, 'CIT 222', 'Instructional Materials & Methods', 45)
+(1765, 'DM 9302', 'Ministry and Theology', 3)
+(97, 'ACC 203', 'Introduction to Accounting I', 1)
+(98, 'ACC 204', 'Introduction to Accounting II', 1)
+
+📄 First 5 rows of 'booking_status':
+(9, datetime.datetime(2024, 11, 22, 13, 21, 28, 575950), 'approved')
+(10, datetime.datetime(2024, 11, 22, 13, 21, 28, 575950), 'declined')
+(11, datetime.datetime(2024, 11, 22, 13, 21, 28, 575950), 'pending')
+(12, datetime.datetime(2024, 11, 22, 13, 21, 28, 575950), 'created')
+(13, datetime.datetime(2024, 11, 22, 13, 21, 28, 575950), 'passed')
+
+📄 First 5 rows of 'followers':
+(31, 'ashishsah1000@gmail.com', 'orignaldev1000@gmail.com')
+(46, 'somashaw1108@gmail.com', 'ashishsah1000@gmail.com')
+(49, 'alam.m.official@gmail.com', 'ashishsah1000@gmail.com')
+(50, 'rez1.biswas@gmail.com', 'indrathegodofthunder@gmail.com')
+(51, 'ashishsah1000@gmail.com', 'rez1.biswas@gmail.com')
+
+📄 First 5 rows of 'invites':
+(157, 'premgameworld@gmail.com', 'ashishsah1000@gmail.com', None, 112, -1, datetime.datetime(2025, 5, 10, 19, 59, 1, 631363, tzinfo=datetime.timezone.utc), False)
+(159, 'premgameworld@gmail.com', 'ashishsah1000@gmail.com', None, 113, -1, datetime.datetime(2025, 5, 10, 19, 59, 14, 185086, tzinfo=datetime.timezone.utc), False)
+(160, 'premgameworld@gmail.com', 'indrathegodofthunder@gmail.com', None, 113, -1, datetime.datetime(2025, 5, 10, 19, 59, 14, 901591, tzinfo=datetime.timezone.utc), True)
+(158, 'premgameworld@gmail.com', 'indrathegodofthunder@gmail.com', None, 112, -1, datetime.datetime(2025, 5, 10, 19, 59, 2, 874767, tzinfo=datetime.timezone.utc), True)
+(162, 'rez1.biswas@gmail.com', 'premgameworld@gmail.com', None, 114, -1, datetime.datetime(2025, 5, 11, 15, 30, 14, 920088, tzinfo=datetime.timezone.utc), False)
+
+📄 First 5 rows of 'post':
+(84, 'somashaw1108@gmail.com', datetime.datetime(2023, 8, 7, 15, 35, 29, 488444, tzinfo=datetime.timezone.utc), 'My m .sc thesis paper.', 0, '111509691060600129', 'Coloring problem of graph theory', 'D3omEW6v0F', 'm.sc project.pdf', 'https://eduthumbnails.s3.ap-south-1.amazonaws.com/uWsrjPFtjE.jpg')
+(85, 'somashaw1108@gmail.com', datetime.datetime(2023, 8, 8, 12, 40, 50, 846558, tzinfo=datetime.timezone.utc), 'Trial.', 0, '11088512429113873303', 'Fluid dynamics', 'gnkqJsyFei', 'm.sc project.pdf', 'https://eduthumbnails.s3.ap-south-1.amazonaws.com/Zox0EDjU4J.jpg')
+(101, 'rez1.biswas@gmail.com', datetime.datetime(2023, 8, 29, 2, 6, 17, 143372, tzinfo=datetime.timezone.utc), 'Testing powerpoint upload', 0, '12249200712561589062', 'Random UCF doc', '5MPV012qoa', 'UCF_Symposium2022_Flit-Path_INTERNSHIP_PresentationTemplate.pptx', 'https://eduthumbnails.s3.ap-south-1.amazonaws.com/2H6J9ZtL2K.jpeg')
+(103, 'nehemiya30@gmail.com', datetime.datetime(2023, 8, 29, 4, 32, 59, 577815, tzinfo=datetime.timezone.utc), 'Nutrition Diagram Picture', 0, '310020392993886174038', 'Nutrition Diagram Picture', 'p4ro41YXCR', 'Nutrition Diagram Picture.png', 'https://eduthumbnails.s3.ap-south-1.amazonaws.com/bSPiJPZVZD.png')
+(113, 'ashishsah1000@gmail.com', datetime.datetime(2023, 9, 12, 6, 4, 38, 622742, tzinfo=datetime.timezone.utc), 'sadfasdfasd', 0, 'something weird fikes4516063099422857', 'asdfsadf', 'ibfB9ATnIX', 'ashish Resume np.pdf', 'https://eduthumbnails.s3.ap-south-1.amazonaws.com/autoSoNJUTOQdb.png')
+
+📄 First 5 rows of 'profile':
+(13, 'Soma Shaw', 'XYZ College', 'Student', datetime.date(2023, 8, 2), datetime.date(2023, 8, 24), 'Engineering', 'somashaw1108@gmail.com', 'https://lh3.googleusercontent.com/a/AAcHTtef2Ms3o9ogvr3pyoTmxGQQTp0VLc8bv6UJ3cfgurTJv74=s96-c', 'Hello this is trial', 'Soma', '10', '0', None, '', '', '')
+(17, 'Masood Alam', 'XYZ College', 'Software Engineer', datetime.date(2013, 9, 15), datetime.date(2013, 12, 17), 'Engineering', 'alam.m.official@gmail.com', 'https://lh3.googleusercontent.com/a/AAcHTteA3NHNjv-Pumx52gB0lskX4KaNXAasQB7CxoMzLZQ=s96-c', None, 'alam.m.official16915041252601085', '10', '0', None, '', '', '')
+(19, 'ppiem ltss1', 'XYZ College', 'Product Designer', datetime.date(2013, 8, 1), datetime.date(2015, 11, 20), 'Psychology', 'ltss1ppiem@gmail.com', 'https://lh3.googleusercontent.com/a/AAcHTtfAUBoV6bSv2uXgkrJ7WmlzTkFYmRJlzfT80LgBuEF7=s96-c', None, 'ltss1ppiem16915509624229399', '10', '0', None, '', '', '')
+(24, 'Ankita Kumari', 'PQR University', 'Software Engineer', datetime.date(2013, 3, 17), datetime.date(2013, 6, 2), 'Engineering', 'ankita.kumari.lhs@gmail.com', 'https://lh3.googleusercontent.com/a/AAcHTtem4X8yS0ZI1Hrple5cNCH4xprT7kBc8LWQkNQfOHQHkny_=s96-c', None, 'ankita.kumari.lhs16935016434703241', '10', '0', None, '', '', '')
+(21, 'Ayush Kumar', 'Ignou', 'Student', datetime.date(2023, 8, 10), datetime.date(2023, 8, 10), 'Math', 'kumarayush152002@gmail.com', 'https://lh3.googleusercontent.com/a/AAcHTtcOxOPSQinpVhEaeP7R65CMcBREvsJaSk1_zfM5M_BQ=s96-c', 'Hello, My name is Ayush Kumar', 'AyushKumar', '10', '0', None, '', '', '')
+
+📄 First 5 rows of 'slots':
+(525, 'rez1.biswas@gmail.com', 'mon', '14:00 ', ' 15:00', False, datetime.datetime(2025, 3, 9, 16, 18, 31, 893296, tzinfo=datetime.timezone.utc))
+(526, 'rez1.biswas@gmail.com', 'tue', '14:00 ', ' 17:00', False, datetime.datetime(2025, 3, 9, 16, 18, 31, 898230, tzinfo=datetime.timezone.utc))
+(527, 'rez1.biswas@gmail.com', 'wed', '20:00 ', ' 22:00', False, datetime.datetime(2025, 3, 9, 16, 18, 31, 902986, tzinfo=datetime.timezone.utc))
+(528, 'rez1.biswas@gmail.com', 'thu', '19:05 ', ' 22:00', False, datetime.datetime(2025, 3, 9, 16, 18, 31, 907568, tzinfo=datetime.timezone.utc))
+(529, 'rez1.biswas@gmail.com', 'sun', '15:00 ', ' 19:00', False, datetime.datetime(2025, 3, 9, 16, 18, 31, 912041, tzinfo=datetime.timezone.utc))
+
+📄 First 5 rows of 'session_files':
+
+📄 First 5 rows of 'transactions':
+(320, datetime.datetime(2025, 6, 8, 11, 43, 16, 743382), 'cs_test_a16S27ypVbqqSMQPYz2IynSEXUbetvTa1nMxIqz51nQqGfwZyUhocT3HsU', 'debit', Decimal('50.0000'), 'ashishsah1000@gmail.com', 'study send wallet', 'ashishsah1000@gmail.com', 'debited $50 for booking  a class on -  RAG the annotations with data-1749382951222')
+(321, datetime.datetime(2025, 6, 8, 11, 48, 51, 961296), 'cs_test_a1DcfzF4yL2b8HTtcbU7dNROjqR53Bep4gWf7LhxXMDEXVuklMsWIboz5W', 'debit', Decimal('15.0000'), 'admin_dev@studysend.com', 'study send wallet', 'admin_dev@studysend.com', 'debited $15 for booking  a class on -  this is some random post-1749383323497')
+(322, datetime.datetime(2025, 6, 8, 12, 10, 30, 482725), 'cs_test_a1VSvvuaAm2HZ1cro5zT080FDCpWbWWoPXF1b3fcCa9zH5yPGrSFSWnLcQ', 'debit', Decimal('50.0000'), 'ashishsah1000@gmail.com', 'study send wallet', 'ashishsah1000@gmail.com', 'debited $50 for booking  a class on -  RAG the annotations with data-1749384601223')
+(323, datetime.datetime(2025, 6, 8, 12, 41, 29, 761474), 'cs_test_a1f5AXXtjQ0kHqjpytlTBNcJuRU0GqG4WEdCQtJIUg9YYSI13BGgxPBQQ9', 'debit', Decimal('50.0000'), 'ashishsah1000@gmail.com', 'study send wallet', 'ashishsah1000@gmail.com', 'debited $50 for booking  a class on -  RAG the annotations with data-1749386456796')
+(324, datetime.datetime(2025, 6, 8, 14, 22, 33, 174271), 'cs_test_a1Cl3ST5Ku36hAxVn5AZogEO7umfMEr0D9QIWyQkqOQOKkjag2ICCZQ9bD', 'debit', Decimal('12.0000'), 'premgameworld@gmail.com', 'study send wallet', 'premgameworld@gmail.com', 'debited $12 for booking  a class on -  art classes')
+
+📄 First 5 rows of 'sessions':
+(112, 'GWO Explaination', 'Gray wolf Session', datetime.datetime(2025, 6, 5, 0, 0, tzinfo=datetime.timezone.utc), datetime.time(0, 0), [], [], [], False, 'premgameworld@gmail.com', 'active', datetime.time(1, 30), 12, [{'id': '178597c3-3d45-422f-b8dd-1e8f32159d28', 'file': '1746906960_Modern.pdf', 'thumb': 'https://ssthumbdev.s3.us-east-2.amazonaws.com/1746906961337_tP4SubWLvC.png', 'defaultName': 'GWO FA Cluster Optimization Report.pdf'}])
+(113, 'Mac Class', 'hello', datetime.datetime(2025, 5, 31, 22, 0, tzinfo=datetime.timezone.utc), datetime.time(22, 0), ['Friday', 'Wednesday'], [], [], True, 'premgameworld@gmail.com', 'active', datetime.time(0, 0), 16, [])
+(114, 'Test session with prem', 'Test', datetime.datetime(2025, 5, 11, 16, 30, tzinfo=datetime.timezone.utc), datetime.time(16, 30), [], [], [], False, 'rez1.biswas@gmail.com', 'active', datetime.time(17, 30), 10, [])
+(115, 'art classes', 'Session Details here', datetime.datetime(2025, 6, 5, 0, 0, tzinfo=datetime.timezone.utc), datetime.time(0, 0), ['Wednesday', 'Saturday'], [], [], True, 'indrathegodofthunder@gmail.com', 'active', datetime.time(1, 0), 12, [])
+(116, 'custom', 'test', datetime.datetime(2025, 5, 17, 21, 11, tzinfo=datetime.timezone.utc), datetime.time(21, 11), [], [], [], False, 'rez1.biswas@gmail.com', 'active', datetime.time(21, 15), 10, [])
+
+📄 First 5 rows of 'wallet':
+(23, Decimal('0.0000'), datetime.datetime(2024, 11, 22, 9, 6, 1, 139186), 'USD', 'active', 'mr.pk.for.yt@gmail.com')
+(24, Decimal('0.0000'), datetime.datetime(2024, 11, 22, 9, 15, 5, 872768), 'USD', 'active', 'anitadevi829475@gmail.com')
+(25, Decimal('0.0000'), datetime.datetime(2024, 11, 22, 16, 40, 12, 459719), 'USD', 'active', 'bhagwanlal280125@gmail.com')
+(26, Decimal('0.0000'), datetime.datetime(2024, 11, 25, 16, 31, 58, 770876), 'USD', 'active', 'zfalam@gmail.com')
+(27, Decimal('0.0000'), datetime.datetime(2024, 12, 4, 1, 12, 8, 808070), 'USD', 'active', 'hmp1392001@gmail.com')
+
+📄 First 5 rows of 'savedposts':
+(28, 84, 'ashishsah1000@gmail.com', 'coloring and beyond chapter', datetime.datetime(2023, 8, 20, 11, 48, 54, 43730))
+(44, 85, 'rez1.biswas@gmail.com', '', datetime.datetime(2023, 8, 29, 2, 2, 45, 201336))
+(45, 84, 'rez1.biswas@gmail.com', '', datetime.datetime(2023, 8, 29, 2, 3, 0, 911785))
+(57, 136, 'ashishsah1000@gmail.com', 'May be important ', datetime.datetime(2023, 11, 21, 8, 57, 38, 17267))
+(58, 156, 'ashishsah1000@gmail.com', 'Saving my own document ', datetime.datetime(2023, 11, 23, 14, 50, 0, 334092))
+
+📄 First 5 rows of 'bookings':
+(519, 'RAG the annotations with data-1749384601223', datetime.datetime(2025, 6, 9, 9, 0, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 6, 9, 9, 30, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 6, 9, 9, 0, tzinfo=datetime.timezone.utc), 'orignaldev1000@gmail.com', 'ashishsah1000@gmail.com', 600347, True, '', 'I am rejecting this meeting request ', 'passed', '', 'cs_test_a1VSvvuaAm2HZ1cro5zT080FDCpWbWWoPXF1b3fcCa9zH5yPGrSFSWnLcQ', Decimal('50.00'), 'not_started', None, 480, 224, False, None, 'unavailable')
+(520, 'RAG the annotations with data-1749386456796', datetime.datetime(2025, 6, 9, 9, 0, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 6, 9, 9, 30, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 6, 9, 9, 0, tzinfo=datetime.timezone.utc), 'orignaldev1000@gmail.com', 'ashishsah1000@gmail.com', 69404, True, '', '', 'passed', '', 'cs_test_a1f5AXXtjQ0kHqjpytlTBNcJuRU0GqG4WEdCQtJIUg9YYSI13BGgxPBQQ9', Decimal('50.00'), 'not_started', None, 480, 224, False, None, 'unavailable')
+(523, 'RAG the annotations with data-1749396907455', datetime.datetime(2025, 6, 13, 23, 0, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 6, 13, 23, 30, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 6, 13, 23, 0, tzinfo=datetime.timezone.utc), 'orignaldev1000@gmail.com', 'ashishsah1000@gmail.com', 417655, True, '', '', 'passed', '', 'cs_test_a1Vby1BwxZ9MUr7m5C7axIvjV9iqUOdCYyT4o1XJNbqhUVjSgB70JzR4dw', Decimal('50.00'), 'not_started', None, 482, 224, False, None, 'unavailable')
+(517, 'RAG the annotations with data-1749382951222', datetime.datetime(2025, 6, 13, 7, 0, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 6, 13, 7, 30, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 6, 13, 7, 0, tzinfo=datetime.timezone.utc), 'orignaldev1000@gmail.com', 'ashishsah1000@gmail.com', 315109, True, '', 'declining ', 'passed', '', 'cs_test_a16S27ypVbqqSMQPYz2IynSEXUbetvTa1nMxIqz51nQqGfwZyUhocT3HsU', Decimal('50.00'), 'not_started', None, 377, 224, False, None, 'unavailable')
+(521, 'art classes', datetime.datetime(2025, 6, 11, 0, 0, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 6, 11, 1, 0, tzinfo=datetime.timezone.utc), datetime.datetime(2025, 6, 11, 0, 0, tzinfo=datetime.timezone.utc), 'indrathegodofthunder@gmail.com', 'premgameworld@gmail.com', 266371, True, '', '', 'passed', '', 'cs_test_a1Cl3ST5Ku36hAxVn5AZogEO7umfMEr0D9QIWyQkqOQOKkjag2ICCZQ9bD', Decimal('12.00'), 'not_started', None, None, None, True, 115, 'unavailable')
+
+📄 First 5 rows of 'notifications':
+(291, 11, 'indrathegodofthunder@gmail.com', 'sessions/119', 'You have been invited to a sessions', True, datetime.datetime(2025, 5, 26, 6, 58, 33, 152846, tzinfo=datetime.timezone.utc), 'invite')
+(292, 10, 'rez1.biswas@gmail.com', 'meeting?page=requests', 'You have got a request for post booking', True, datetime.datetime(2025, 5, 27, 2, 54, 1, 768653, tzinfo=datetime.timezone.utc), 'Request')
+(294, 22, 'rez1.biswas@gmail.com', 'meeting?page=requests', 'You have got a request for post booking', True, datetime.datetime(2025, 5, 29, 2, 40, 23, 138504, tzinfo=datetime.timezone.utc), 'Request')
+(295, 18, 'nehemiya30@gmail.com', 'ignite/219', 'You have got a request for post booking is approved.', True, datetime.datetime(2025, 5, 29, 2, 40, 38, 188744, tzinfo=datetime.timezone.utc), 'approved')
+(293, 18, 'ashishsah1000@gmail.com', 'ignite/203', 'You have got a request for post booking is approved.', True, datetime.datetime(2025, 5, 27, 3, 31, 6, 804929, tzinfo=datetime.timezone.utc), 'approved')
+
+📄 First 5 rows of 'follow_crns':
+(3, 11, 'Phone', 'Nord', None)
+(6, 15, 'hello', 'moto', None)
+(8, 11, 'hello', 'bro', None)
+(9, 18, 'Intro to C', 'N/A', None)
+(10, 18, 'Biology 1', 'N/A', None)

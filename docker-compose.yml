@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  chat_backend:
+    build: .
+    container_name: chat_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      MONGODB_URL: mongodb+srv://piyusharyan011:BgIrSG5fIKO3w5Bk@study-chat.6ur5kxg.mongodb.net/study-chat?retryWrites=true&w=majority&appName=study-chat
+      DATABASE_NAME: study-chat
+      JWT_SECRET_KEY: your-production-secret-key-change-this-in-production
+      JWT_ALGORITHM: HS256
+      JWT_EXPIRE_MINUTES: 1440
+      CORS_ORIGINS: http://localhost:3000,http://localhost:8080,http://localhost:5173
+    networks:
+      - chat_network
+    volumes:
+      - .:/app
+    command: ["python", "run.py", "--production", "--workers", "2"]
+
+networks:
+  chat_network:
+    driver: bridge
