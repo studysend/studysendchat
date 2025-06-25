@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  chat_backend:
+    build: .
+    container_name: chat_backend_dev
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    networks:
+      - chat_network
+    volumes:
+      - .:/app
+    command: ["python", "run.py", "--reload"]
+
+networks:
+  chat_network:
+    driver: bridge 
