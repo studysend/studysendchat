@@ -1,6 +1,20 @@
-version: '3.8'
-
 services:
+  mongodb:
+    image: mongo:7.0
+    container_name: chat_mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+      MONGO_INITDB_DATABASE: study-chat
+    volumes:
+      - mongodb_data:/data/db
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    networks:
+      - chat_network
+
   chat_backend:
     build: .
     container_name: chat_backend
@@ -8,7 +22,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      MONGODB_URL: mongodb+srv://piyusharyan011:BgIrSG5fIKO3w5Bk@study-chat.6ur5kxg.mongodb.net/study-chat?retryWrites=true&w=majority&appName=study-chat
+      MONGODB_URL: mongodb://admin:password123@mongodb:27017/study-chat?authSource=admin
       DATABASE_NAME: study-chat
       JWT_SECRET_KEY: your-production-secret-key-change-this-in-production
       JWT_ALGORITHM: HS256
@@ -19,7 +33,12 @@ services:
     volumes:
       - .:/app
     command: ["python", "run.py", "--production", "--workers", "2"]
+    depends_on:
+      - mongodb
 
 networks:
   chat_network:
     driver: bridge
+
+volumes:
+  mongodb_data:
