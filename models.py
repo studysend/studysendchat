@@ -1,23 +1,28 @@
-from pydantic import BaseModel, Field, ConfigDict
-from typing import List, Optional, Any
+from pydantic import BaseModel, Field, ConfigDict, field_validator
+from typing import List, Optional, Any, Annotated
 from datetime import datetime
 from bson import ObjectId
 
 class PyObjectId(ObjectId):
     @classmethod
-    def __get_validators__(cls):
-        yield cls.validate
+    def __get_pydantic_core_schema__(cls, source_type, handler):
+        from pydantic_core import core_schema
+        return core_schema.str_schema()
+
+    @classmethod
+    def __get_pydantic_json_schema__(cls, field_schema, handler):
+        field_schema.update(type="string")
+        return field_schema
 
     @classmethod
     def validate(cls, v):
-        if not ObjectId.is_valid(v):
-            raise ValueError("Invalid objectid")
-        return ObjectId(v)
-
-    @classmethod
-    def __get_pydantic_json_schema__(cls, field_schema):
-        field_schema.update(type="string")
-        return field_schema
+        if isinstance(v, ObjectId):
+            return str(v)
+        if isinstance(v, str):
+            if ObjectId.is_valid(v):
+                return v
+            raise ValueError("Invalid ObjectId")
+        raise ValueError("Invalid ObjectId")
 
 class User(BaseModel):
     model_config = ConfigDict(
@@ -26,7 +31,7 @@ class User(BaseModel):
         json_encoders={ObjectId: str}
     )
     
-    id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
+    id: Optional[str] = Field(default=None, alias="_id")
     email: str
     name: str
     profile_image: Optional[str] = None
@@ -41,7 +46,7 @@ class ChatMessage(BaseModel):
         json_encoders={ObjectId: str}
     )
     
-    id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
+    id: Optional[str] = Field(default=None, alias="_id")
     conversation_id: str
     sender_email: str
     sender_name: str
@@ -59,7 +64,7 @@ class Conversation(BaseModel):
         json_encoders={ObjectId: str}
     )
     
-    id: Optional[PyObjectId] = Field(default_factory=PyObjectId, alias="_id")
+    id: Optional[str] = Field(default=None, alias="_id")
     participants: List[str]  # List of email addresses
     conversation_type: str = "direct"  # direct, group
     created_at: datetime = Field(default_factory=datetime.utcnow)
