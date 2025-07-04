@@ -1,5 +1,6 @@
 import socketio
 from typing import Dict
+from datetime import timezone
 from auth import verify_token
 from chat_service import ChatService
 from models import MessageRequest
@@ -125,7 +126,7 @@ class SocketHandler:
                     'sender_email': sender_email,
                     'sender_name': sender_user.name,
                     'message': message_request.message,
-                    'timestamp': message.timestamp.isoformat(),
+                    'timestamp': message.timestamp.replace(tzinfo=timezone.utc).isoformat(),
                     'message_type': message_request.message_type,
                     'reply_to': message_request.reply_to
                 }
@@ -254,4 +255,87 @@ class SocketHandler:
                 await self.sio.emit('online_users', {'users': online_users}, room=sid)
                 
             except Exception as e:
-                logger.error(f"Get online users error: {e}") 
+                logger.error(f"Get online users error: {e}")
+        
+        @self.sio.event
+        async def get_conversations(sid):
+            """Get user conversations via Socket.IO"""
+            try:
+                # Get user info from connected users
+                user_email = None
+                for email, socket_id in connected_users.items():
+                    if socket_id == sid:
+                        user_email = email
+                        break
+                
+                if not user_email:
+                    await self.sio.emit('error', {'message': 'User not authenticated'}, room=sid)
+                    return
+                
+                # Get conversations
+                conversations = await ChatService.get_user_conversations(user_email)
+                
+                # Convert to dict format for JSON serialization
+                conversations_data = []
+                for conv in conversations:
+                    conv_data = {
+                        'conversation_id': conv.conversation_id,
+                        'participants': conv.participants,
+                        'last_message': conv.last_message,
+                        'last_message_time': conv.last_message_time.replace(tzinfo=timezone.utc).isoformat() if conv.last_message_time else None,
+                        'last_message_sender': conv.last_message_sender,
+                        'unread_count': conv.unread_count
+                    }
+                    conversations_data.append(conv_data)
+                
+                await self.sio.emit('conversations_list', {'conversations': conversations_data}, room=sid)
+                
+            except Exception as e:
+                logger.error(f"Get conversations error: {e}")
+                await self.sio.emit('error', {'message': 'Failed to get conversations'}, room=sid)
+        
+        @self.sio.event
+        async def get_conversations_enriched(sid):
+            """Get user conversations with full user details via Socket.IO"""
+            try:
+                # Get user info from connected users
+                user_email = None
+                for email, socket_id in connected_users.items():
+                    if socket_id == sid:
+                        user_email = email
+                        break
+                
+                if not user_email:
+                    await self.sio.emit('error', {'message': 'User not authenticated'}, room=sid)
+                    return
+                
+                # Get enriched conversations
+                conversations = await ChatService.get_user_conversations_enriched(user_email)
+                
+                # Convert to dict format for JSON serialization
+                conversations_data = []
+                for conv in conversations:
+                    participants_data = []
+                    for participant in conv.participants:
+                        participants_data.append({
+                            'email': participant.email,
+                            'name': participant.name,
+                            'profile_image': participant.profile_image,
+                            'is_online': participant.is_online
+                        })
+                    
+                    conv_data = {
+                        'conversation_id': conv.conversation_id,
+                        'participants': participants_data,
+                        'last_message': conv.last_message,
+                        'last_message_time': conv.last_message_time.replace(tzinfo=timezone.utc).isoformat() if conv.last_message_time else None,
+                        'last_message_sender': conv.last_message_sender,
+                        'unread_count': conv.unread_count
+                    }
+                    conversations_data.append(conv_data)
+                
+                await self.sio.emit('enriched_conversations_list', {'conversations': conversations_data}, room=sid)
+                
+            except Exception as e:
+                logger.error(f"Get enriched conversations error: {e}")
+                await self.sio.emit('error', {'message': 'Failed to get enriched conversations'}, room=sid) 

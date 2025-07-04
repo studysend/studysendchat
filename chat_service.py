@@ -1,7 +1,7 @@
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 from bson import ObjectId
-from models import ChatMessage, Conversation, User, MessageResponse, ConversationResponse
+from models import ChatMessage, Conversation, User, MessageResponse, ConversationResponse, EnrichedConversationResponse, UserSummary
 from database import get_chat_messages_collection, get_conversations_collection, get_users_collection
 
 class ChatService:
@@ -24,7 +24,7 @@ class ChatService:
         conversation_data = {
             "participants": [participant1, participant2],
             "conversation_type": "direct", 
-            "created_at": datetime.utcnow(),
+            "created_at": datetime.now(timezone.utc),
             "unread_count": {participant1: 0, participant2: 0}
         }
         
@@ -45,7 +45,7 @@ class ChatService:
             "sender_email": sender_email,
             "sender_name": sender_name,
             "message": message_content,
-            "timestamp": datetime.utcnow(),
+            "timestamp": datetime.now(timezone.utc),
             "message_type": message_type,
             "edited": False,
             "reply_to": reply_to
@@ -141,6 +141,49 @@ class ChatService:
         return conversations
     
     @staticmethod
+    async def get_user_conversations_enriched(user_email: str) -> List[EnrichedConversationResponse]:
+        """Get all conversations for a user with full user details"""
+        conversations_collection = await get_conversations_collection()
+        users_collection = await get_users_collection()
+        
+        cursor = conversations_collection.find(
+            {"participants": user_email}
+        ).sort("last_message_time", -1)
+        
+        conversations = []
+        async for conv in cursor:
+            # Get user details for all participants
+            participant_users = []
+            for participant_email in conv["participants"]:
+                user_data = await users_collection.find_one({"email": participant_email})
+                if user_data:
+                    participant_users.append(UserSummary(
+                        email=user_data["email"],
+                        name=user_data["name"],
+                        profile_image=user_data.get("profile_image"),
+                        is_online=user_data.get("is_online", False)
+                    ))
+                else:
+                    # Fallback for users not found in database
+                    participant_users.append(UserSummary(
+                        email=participant_email,
+                        name=participant_email.split('@')[0],  # Use email prefix as name
+                        profile_image=None,
+                        is_online=False
+                    ))
+            
+            conversations.append(EnrichedConversationResponse(
+                conversation_id=str(conv["_id"]),
+                participants=participant_users,
+                last_message=conv.get("last_message"),
+                last_message_time=conv.get("last_message_time"),
+                last_message_sender=conv.get("last_message_sender"),
+                unread_count=conv.get("unread_count", {}).get(user_email, 0)
+            ))
+        
+        return conversations
+    
+    @staticmethod
     async def mark_conversation_as_read(conversation_id: str, user_email: str):
         """Mark all messages in a conversation as read for a user"""
         conversations_collection = await get_conversations_collection()
@@ -157,7 +200,7 @@ class ChatService:
         
         update_data = {
             "is_online": is_online,
-            "last_seen": datetime.utcnow()
+            "last_seen": datetime.now(timezone.utc)
         }
         
         if socket_id:

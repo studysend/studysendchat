@@ -4,7 +4,7 @@ from typing import List, Optional
 import logging
 
 from models import (
-    User, MessageResponse, ConversationResponse, 
+    User, MessageResponse, ConversationResponse, EnrichedConversationResponse,
     MessageRequest
 )
 from chat_service import ChatService
@@ -82,6 +82,16 @@ async def get_conversations(current_user: str = Depends(get_current_user)):
     except Exception as e:
         logger.error(f"Get conversations error: {e}")
         raise HTTPException(status_code=500, detail="Failed to get conversations")
+
+@router.get("/conversations/enriched", response_model=List[EnrichedConversationResponse])
+async def get_conversations_enriched(current_user: str = Depends(get_current_user)):
+    """Get all conversations for the current user with full user details"""
+    try:
+        conversations = await ChatService.get_user_conversations_enriched(current_user)
+        return conversations
+    except Exception as e:
+        logger.error(f"Get enriched conversations error: {e}")
+        raise HTTPException(status_code=500, detail="Failed to get enriched conversations")
 
 @router.get("/conversations/{conversation_id}/messages", response_model=List[MessageResponse])
 async def get_conversation_messages(

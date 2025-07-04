@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field, ConfigDict, field_validator
 from typing import List, Optional, Any, Annotated
-from datetime import datetime
+from datetime import datetime, timezone
 from bson import ObjectId
 
 class PyObjectId(ObjectId):
@@ -51,7 +51,7 @@ class ChatMessage(BaseModel):
     sender_email: str
     sender_name: str
     message: str
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     message_type: str = "text"  # text, image, file, etc.
     edited: bool = False
     edited_at: Optional[datetime] = None
@@ -67,7 +67,7 @@ class Conversation(BaseModel):
     id: Optional[str] = Field(default=None, alias="_id")
     participants: List[str]  # List of email addresses
     conversation_type: str = "direct"  # direct, group
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     last_message: Optional[str] = None
     last_message_time: Optional[datetime] = None
     last_message_sender: Optional[str] = None
@@ -82,6 +82,20 @@ class MessageRequest(BaseModel):
 class ConversationResponse(BaseModel):
     conversation_id: str
     participants: List[str]
+    last_message: Optional[str] = None
+    last_message_time: Optional[datetime] = None
+    last_message_sender: Optional[str] = None
+    unread_count: int = 0
+
+class UserSummary(BaseModel):
+    email: str
+    name: str
+    profile_image: Optional[str] = None
+    is_online: bool = False
+
+class EnrichedConversationResponse(BaseModel):
+    conversation_id: str
+    participants: List[UserSummary]
     last_message: Optional[str] = None
     last_message_time: Optional[datetime] = None
     last_message_sender: Optional[str] = None

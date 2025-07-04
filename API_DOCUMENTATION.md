@@ -165,7 +165,7 @@ Authorization: Bearer <jwt_token>
     "conversation_id": "64f1234567890abcdef12345",
     "participants": ["user@example.com", "other@example.com"],
     "last_message": "Hello there!",
-    "last_message_time": "2023-12-07T10:30:00.000Z",
+    "last_message_time": "2023-12-07T10:30:00.000000+00:00",
     "last_message_sender": "other@example.com",
     "unread_count": 3
   },
@@ -173,7 +173,7 @@ Authorization: Bearer <jwt_token>
     "conversation_id": "64f1234567890abcdef12346",
     "participants": ["user@example.com", "another@example.com"],
     "last_message": "How are you?",
-    "last_message_time": "2023-12-07T09:15:00.000Z",
+    "last_message_time": "2023-12-07T09:15:00.000000+00:00",
     "last_message_sender": "user@example.com",
     "unread_count": 0
   }
@@ -184,6 +184,49 @@ Authorization: Bearer <jwt_token>
 - `200 OK` - Success
 - `401 Unauthorized` - Invalid or missing token
 - `500 Internal Server Error` - Failed to get conversations
+
+### Get User Conversations (Enriched)
+
+Retrieves all conversations for the authenticated user with full user details, ordered by last message time.
+
+**Endpoint:** `GET /api/conversations/enriched`
+
+**Headers:**
+```http
+Authorization: Bearer <jwt_token>
+```
+
+**Response:**
+```json
+[
+  {
+    "conversation_id": "64f1234567890abcdef12345",
+    "participants": [
+      {
+        "email": "user@example.com",
+        "name": "John Doe",
+        "profile_image": "https://example.com/profile.jpg",
+        "is_online": true
+      },
+      {
+        "email": "other@example.com",
+        "name": "Jane Smith",
+        "profile_image": null,
+        "is_online": false
+      }
+    ],
+    "last_message": "Hello there!",
+    "last_message_time": "2023-12-07T10:30:00.000000+00:00",
+    "last_message_sender": "other@example.com",
+    "unread_count": 3
+  }
+]
+```
+
+**Status Codes:**
+- `200 OK` - Success
+- `401 Unauthorized` - Invalid or missing token
+- `500 Internal Server Error` - Failed to get enriched conversations
 
 ### Start New Conversation
 
@@ -248,7 +291,7 @@ GET /api/conversations/64f1234567890abcdef12345/messages?skip=0&limit=20
     "sender_email": "other@example.com",
     "sender_name": "Jane Doe",
     "message": "Hello there!",
-    "timestamp": "2023-12-07T10:30:00.000Z",
+    "timestamp": "2023-12-07T10:30:00.000000+00:00",
     "message_type": "text",
     "edited": false,
     "reply_to": null
@@ -259,7 +302,7 @@ GET /api/conversations/64f1234567890abcdef12345/messages?skip=0&limit=20
     "sender_email": "user@example.com",
     "sender_name": "John Doe",
     "message": "Hi! How are you?",
-    "timestamp": "2023-12-07T10:32:00.000Z",
+    "timestamp": "2023-12-07T10:32:00.000000+00:00",
     "message_type": "text",
     "edited": false,
     "reply_to": "64f1234567890abcdef12347"
@@ -455,6 +498,28 @@ Request list of currently online users.
 socket.emit("get_online_users");
 ```
 
+### Get Conversations
+
+Request list of user conversations via Socket.IO.
+
+**Event:** `get_conversations`
+
+**Data:**
+```javascript
+socket.emit("get_conversations");
+```
+
+### Get Enriched Conversations
+
+Request list of user conversations with full user details via Socket.IO.
+
+**Event:** `get_conversations_enriched`
+
+**Data:**
+```javascript
+socket.emit("get_conversations_enriched");
+```
+
 ---
 
 ## Server to Client Events
@@ -476,7 +541,7 @@ socket.on("new_message", (data) => {
     "sender_email": "sender@example.com",
     "sender_name": "Jane Doe",
     "message": "Hello there!",
-    "timestamp": "2023-12-07T10:35:00.000Z",
+    "timestamp": "2023-12-07T10:35:00.000000+00:00",
     "message_type": "text",
     "reply_to": null
   }
@@ -555,6 +620,73 @@ socket.on("online_users", (data) => {
   /*
   {
     "users": ["user1@example.com", "user2@example.com"]
+  }
+  */
+});
+```
+
+### Conversations List
+
+Receive list of user conversations.
+
+**Event:** `conversations_list`
+
+**Data:**
+```javascript
+socket.on("conversations_list", (data) => {
+  console.log(data);
+  /*
+  {
+    "conversations": [
+      {
+        "conversation_id": "64f1234567890abcdef12345",
+        "participants": ["user@example.com", "other@example.com"],
+        "last_message": "Hello there!",
+        "last_message_time": "2023-12-07T10:30:00.000000+00:00",
+        "last_message_sender": "other@example.com",
+        "unread_count": 3
+      }
+    ]
+  }
+  */
+});
+```
+
+### Enriched Conversations List
+
+Receive list of user conversations with full user details.
+
+**Event:** `enriched_conversations_list`
+
+**Data:**
+```javascript
+socket.on("enriched_conversations_list", (data) => {
+  console.log(data);
+  /*
+  {
+    "conversations": [
+      {
+        "conversation_id": "64f1234567890abcdef12345",
+        "participants": [
+          {
+            "email": "user@example.com",
+            "name": "John Doe",
+            "profile_image": "https://example.com/profile.jpg",
+            "is_online": true
+          },
+          {
+            "email": "other@example.com",
+            "name": "Jane Smith",
+            "profile_image": null,
+            "is_online": false
+          }
+        ],
+        "last_message": "Hello there!",
+        "last_message_time": "2023-12-07T10:30:00.000000+00:00",
+        "last_message_sender": "other@example.com",
+        "unread_count": 3
+      }
+    ]
   }
   */
 });
