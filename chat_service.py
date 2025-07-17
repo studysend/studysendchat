@@ -27,7 +27,14 @@ class ChatService:
             "created_at": datetime.utcnow(),
             "unread_count": {participant1: 0, participant2: 0}
         }
+        conversation_data = {
+            "participants": [participant1, participant2],
+            "conversation_type": "direct", 
+            "created_at": datetime.utcnow(),
+            "unread_count": {participant1: 0, participant2: 0}
+        }
         
+        result = await conversations_collection.insert_one(conversation_data)
         result = await conversations_collection.insert_one(conversation_data)
         return str(result.inserted_id)
     
@@ -55,12 +62,29 @@ class ChatService:
         result = await chat_messages_collection.insert_one(message_data)
         
         # Create response object
+        message_data = {
+            "conversation_id": conversation_id,
+            "sender_email": sender_email,
+            "sender_name": sender_name,
+            "message": message_content,
+            "timestamp": datetime.utcnow(),
+            "message_type": message_type,
+            "edited": False,
+            "reply_to": reply_to
+        }
+        
+        # Insert message
+        result = await chat_messages_collection.insert_one(message_data)
+        
+        # Create response object
         message = ChatMessage(
+            id=str(result.inserted_id),
             id=str(result.inserted_id),
             conversation_id=conversation_id,
             sender_email=sender_email,
             sender_name=sender_name,
             message=message_content,
+            timestamp=message_data["timestamp"],
             timestamp=message_data["timestamp"],
             message_type=message_type,
             reply_to=reply_to
@@ -185,6 +209,9 @@ class ChatService:
             # Convert ObjectId to string for Pydantic v2 compatibility
             if "_id" in user_data and isinstance(user_data["_id"], ObjectId):
                 user_data["_id"] = str(user_data["_id"])
+            # Convert ObjectId to string for Pydantic v2 compatibility
+            if "_id" in user_data and isinstance(user_data["_id"], ObjectId):
+                user_data["_id"] = str(user_data["_id"])
             return User(**user_data)
         return None
     
@@ -204,7 +231,19 @@ class ChatService:
         
         result = await users_collection.insert_one(user_data)
         
+        user_data = {
+            "email": email,
+            "name": name,
+            "profile_image": profile_image,
+            "is_online": False,
+            "last_seen": None,
+            "socket_id": None
+        }
+        
+        result = await users_collection.insert_one(user_data)
+        
         user = User(
+            id=str(result.inserted_id),
             id=str(result.inserted_id),
             email=email,
             name=name,

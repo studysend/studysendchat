@@ -1,6 +1,9 @@
 from motor.motor_asyncio import AsyncIOMotorClient
 from config import settings
 import asyncio
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Database:
     client: AsyncIOMotorClient = None
@@ -12,22 +15,41 @@ async def get_database():
     return db.database
 
 async def connect_to_mongo():
-    """Create database connection"""
-    db.client = AsyncIOMotorClient(settings.MONGODB_URL)
-    db.database = db.client[settings.DATABASE_NAME]
+    """Create database connection with retry logic"""
+    max_retries = 5
+    retry_delay = 2
     
-    # Create indexes for better performance
-    await db.database.chat_messages.create_index([("conversation_id", 1), ("timestamp", -1)])
-    await db.database.conversations.create_index([("participants", 1)])
-    await db.database.conversations.create_index([("last_message_time", -1)])
-    
-    print("Connected to MongoDB")
+    for attempt in range(max_retries):
+        try:
+            logger.info(f"Attempting to connect to MongoDB (attempt {attempt + 1}/{max_retries})")
+            db.client = AsyncIOMotorClient(settings.MONGODB_URL)
+            db.database = db.client[settings.DATABASE_NAME]
+            
+            # Test the connection
+            await db.client.admin.command('ping')
+            
+            # Create indexes for better performance
+            await db.database.chat_messages.create_index([("conversation_id", 1), ("timestamp", -1)])
+            await db.database.conversations.create_index([("participants", 1)])
+            await db.database.conversations.create_index([("last_message_time", -1)])
+            
+            logger.info("Connected to MongoDB successfully")
+            return
+            
+        except Exception as e:
+            logger.error(f"MongoDB connection attempt {attempt + 1} failed: {e}")
+            if attempt < max_retries - 1:
+                logger.info(f"Retrying in {retry_delay} seconds...")
+                await asyncio.sleep(retry_delay)
+            else:
+                logger.error("All MongoDB connection attempts failed")
+                raise e
 
 async def close_mongo_connection():
     """Close database connection"""
     if db.client:
         db.client.close()
-        print("Disconnected from MongoDB")
+        logger.info("Disconnected from MongoDB")
 
 # Collections
 async def get_chat_messages_collection():
