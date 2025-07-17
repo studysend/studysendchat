@@ -21,13 +21,14 @@ class ChatService:
             return str(existing_conversation["_id"])
         
         # Create new conversation
-        conversation = Conversation(
-            participants=[participant1, participant2],
-            conversation_type="direct",
-            unread_count={participant1: 0, participant2: 0}
-        )
+        conversation_data = {
+            "participants": [participant1, participant2],
+            "conversation_type": "direct", 
+            "created_at": datetime.utcnow(),
+            "unread_count": {participant1: 0, participant2: 0}
+        }
         
-        result = await conversations_collection.insert_one(conversation.dict(by_alias=True))
+        result = await conversations_collection.insert_one(conversation_data)
         return str(result.inserted_id)
     
     @staticmethod
@@ -39,43 +40,57 @@ class ChatService:
         conversations_collection = await get_conversations_collection()
         
         # Create message
+        message_data = {
+            "conversation_id": conversation_id,
+            "sender_email": sender_email,
+            "sender_name": sender_name,
+            "message": message_content,
+            "timestamp": datetime.utcnow(),
+            "message_type": message_type,
+            "edited": False,
+            "reply_to": reply_to
+        }
+        
+        # Insert message
+        result = await chat_messages_collection.insert_one(message_data)
+        
+        # Create response object
         message = ChatMessage(
+            id=str(result.inserted_id),
             conversation_id=conversation_id,
             sender_email=sender_email,
             sender_name=sender_name,
             message=message_content,
+            timestamp=message_data["timestamp"],
             message_type=message_type,
             reply_to=reply_to
         )
         
-        # Insert message
-        result = await chat_messages_collection.insert_one(message.dict(by_alias=True))
-        message.id = result.inserted_id
+        # Get conversation to find participants
+        conversation = await conversations_collection.find_one({"_id": ObjectId(conversation_id)})
+        if not conversation:
+            raise Exception("Conversation not found")
         
-        # Update conversation with last message info
+        # Prepare update operations
+        update_operations = {
+            "$set": {
+                "last_message": message_content,
+                "last_message_time": message.timestamp,
+                "last_message_sender": sender_email
+            },
+            "$inc": {}
+        }
+        
+        # Increment unread count for all participants except sender
+        for participant in conversation["participants"]:
+            if participant != sender_email:
+                update_operations["$inc"][f"unread_count.{participant}"] = 1
+        
+        # Update conversation with last message info and unread counts
         await conversations_collection.update_one(
             {"_id": ObjectId(conversation_id)},
-            {
-                "$set": {
-                    "last_message": message_content,
-                    "last_message_time": message.timestamp,
-                    "last_message_sender": sender_email
-                },
-                "$inc": {
-                    f"unread_count.{sender_email}": 0  # Don't increment for sender
-                }
-            }
+            update_operations
         )
-        
-        # Increment unread count for other participants
-        conversation = await conversations_collection.find_one({"_id": ObjectId(conversation_id)})
-        if conversation:
-            for participant in conversation["participants"]:
-                if participant != sender_email:
-                    await conversations_collection.update_one(
-                        {"_id": ObjectId(conversation_id)},
-                        {"$inc": {f"unread_count.{participant}": 1}}
-                    )
         
         return message
     
@@ -115,13 +130,16 @@ class ChatService:
         
         conversations = []
         async for conv in cursor:
+            # Get unread count for this specific user
+            unread_count = conv.get("unread_count", {}).get(user_email, 0)
+            
             conversations.append(ConversationResponse(
                 conversation_id=str(conv["_id"]),
                 participants=conv["participants"],
                 last_message=conv.get("last_message"),
                 last_message_time=conv.get("last_message_time"),
                 last_message_sender=conv.get("last_message_sender"),
-                unread_count=conv.get("unread_count", {}).get(user_email, 0)
+                unread_count=unread_count
             ))
         
         return conversations
@@ -164,6 +182,9 @@ class ChatService:
         user_data = await users_collection.find_one({"email": email})
         
         if user_data:
+            # Convert ObjectId to string for Pydantic v2 compatibility
+            if "_id" in user_data and isinstance(user_data["_id"], ObjectId):
+                user_data["_id"] = str(user_data["_id"])
             return User(**user_data)
         return None
     
@@ -172,14 +193,23 @@ class ChatService:
         """Create a new user"""
         users_collection = await get_users_collection()
         
+        user_data = {
+            "email": email,
+            "name": name,
+            "profile_image": profile_image,
+            "is_online": False,
+            "last_seen": None,
+            "socket_id": None
+        }
+        
+        result = await users_collection.insert_one(user_data)
+        
         user = User(
+            id=str(result.inserted_id),
             email=email,
             name=name,
             profile_image=profile_image,
             is_online=False
         )
         
-        result = await users_collection.insert_one(user.dict(by_alias=True))
-        user.id = result.inserted_id
-        
-        return user 
+        return user
